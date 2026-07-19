@@ -1,0 +1,10 @@
+{
+  "name": "Remix: Remix: Wafaq Construction ERP আফডেট 3",
+  "description": "Enterprise-grade Project ERP and Construction Management Portal for Wafaq Company, managing the entire contracting lifecycle from tender to closeout.",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

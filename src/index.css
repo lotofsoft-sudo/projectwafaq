@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Elevate font sizes to be highly readable, elegant, and perfectly sized */
+  --text-xs: 0.825rem;     /* ~13.2px instead of 12px */
+  --text-sm: 0.95rem;      /* ~15.2px instead of 14px */
+  --text-base: 1.1rem;     /* ~17.6px instead of 16px */
+  --text-lg: 1.25rem;      /* ~20px instead of 18px */
+  --text-xl: 1.45rem;      /* ~23.2px instead of 20px */
+  --text-2xl: 1.75rem;     /* ~28px instead of 24px */
+  --text-3xl: 2.15rem;     /* ~34.4px instead of 30px */
+  --text-4xl: 2.75rem;     /* ~44px instead of 36px */
+}
+
+@layer base {
+  body {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior-y: none;
+    font-size: 1.05rem; /* Elevate base size of plain text */
+  }
+
+  /* Map hardcoded microscopic sizes to legible, comfortable, and elegant sizes */
+  .text-\[9px\] {
+    font-size: 0.775rem !important; /* ~12.4px instead of 9px */
+    letter-spacing: 0.025em !important;
+  }
+  .text-\[10px\] {
+    font-size: 0.825rem !important; /* ~13.2px instead of 10px */
+    letter-spacing: 0.02em !important;
+  }
+  .text-\[11px\] {
+    font-size: 0.875rem !important; /* ~14px instead of 11px */
+  }
+  .text-\[12px\] {
+    font-size: 0.925rem !important; /* ~14.8px instead of 12px */
+  }
+
+  /* Make sure table header text isn't micro-sized */
+  thead th, table th {
+    font-size: 0.825rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.05em !important;
+  }
+  
+  /* Make standard body tables/cells easy to scan */
+  tbody td, table td {
+    font-size: 0.925rem !important;
+  }
+
+  /* Make form inputs, buttons, and selection fields comfortable to read and use */
+  input, select, textarea, button {
+    font-size: 0.95rem !important;
+  }
+
+  /* Ensure labels are perfectly readable */
+  label {
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+  }
+  
+  /* Native touch-active shrink animations */
+  .active-scale {
+    transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .active-scale:active {
+    transform: scale(0.96);
+  }
+}
+
+/* Hide scrollbars but allow scrolling for mobile horizontal tab rows */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
