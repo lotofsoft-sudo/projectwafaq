@@ -31,7 +31,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Scale,
-  Printer
+  Printer,
+  Eye
 } from 'lucide-react';
 import { 
   Project, 
@@ -410,6 +411,8 @@ export default function ProjectWorkspace({
   // Document Controller custom fields
   const [showDocUploadForm, setShowDocUploadForm] = useState(false);
   const [docName, setDocName] = useState('');
+  const [docFileUrl, setDocFileUrl] = useState('');
+  const [docFileSize, setDocFileSize] = useState('3.4 MB');
   const [docCategory, setDocCategory] = useState('Drawing');
   const [docRefNumber, setDocRefNumber] = useState('');
   const [docExpiryDate, setDocExpiryDate] = useState('');
@@ -584,11 +587,12 @@ export default function ProjectWorkspace({
       version: docVersion || 'v1.0',
       uploadedBy: currentUser.name,
       uploadedAt: new Date().toISOString().slice(0, 10),
-      size: '3.4 MB',
+      size: docFileSize,
       tags: docTags ? docTags.split(',').map(t => t.trim()) : [],
       referenceNumber: docRefNumber || undefined,
       expiryDate: docExpiryDate || undefined,
-      description: docDescription || undefined
+      description: docDescription || undefined,
+      url: docFileUrl || undefined
     };
 
     setDocuments(prev => [...prev, newDoc]);
@@ -597,6 +601,8 @@ export default function ProjectWorkspace({
 
     // Reset Form
     setDocName('');
+    setDocFileUrl('');
+    setDocFileSize('3.4 MB');
     setDocCategory('Drawing');
     setDocRefNumber('');
     setDocExpiryDate('');
@@ -3085,6 +3091,28 @@ export default function ProjectWorkspace({
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="md:col-span-3">
+                    <label className="block text-[10px] font-mono text-gray-400 uppercase mb-1">Upload File</label>
+                    <input
+                      type="file"
+                      onChange={e => {
+                        if (e.target.files && e.target.files.length > 0) {
+                          const file = e.target.files[0];
+                          if (!docName) {
+                            setDocName(file.name);
+                          }
+                          setDocFileUrl(URL.createObjectURL(file));
+                          setDocFileSize(
+                            file.size > 1024 * 1024
+                              ? `${(file.size / (1024 * 1024)).toFixed(1)} MB`
+                              : `${Math.round(file.size / 1024)} KB`
+                          );
+                        }
+                      }}
+                      className="w-full border border-gray-200 rounded p-1.5 text-xs bg-slate-50 focus:outline-none focus:border-indigo-600"
+                    />
+                  </div>
+
                   <div>
                     <label className="block text-[10px] font-mono text-gray-400 uppercase">Document Name (Incl. Ext)</label>
                     <input
@@ -3214,14 +3242,35 @@ export default function ProjectWorkspace({
                         By {doc.uploadedBy} on {doc.uploadedAt} ({doc.size})
                       </span>
 
-                      <button
-                        onClick={() => alert(`Downloading "${doc.name}" directly from Wafaq Cloud storage.`)}
-                        className="p-1 px-2.5 text-xs text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded font-semibold transition cursor-pointer flex items-center space-x-1"
-                        title="Download File"
-                      >
-                        <Download className="w-3.5 h-3.5" />
-                        <span>Download</span>
-                      </button>
+                      <div className="flex items-center space-x-2">
+                        {doc.url && (
+                          <a
+                            href={doc.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-1 px-2.5 text-xs text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded font-semibold transition cursor-pointer flex items-center space-x-1"
+                            title="Preview File"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>Preview</span>
+                          </a>
+                        )}
+                        <a
+                          href={doc.url || '#'}
+                          download={doc.name}
+                          onClick={(e) => {
+                            if (!doc.url) {
+                              e.preventDefault();
+                              alert(`File not found on server: ${doc.name}`);
+                            }
+                          }}
+                          className="p-1 px-2.5 text-xs text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded font-semibold transition cursor-pointer flex items-center space-x-1"
+                          title="Download File"
+                        >
+                          <Download className="w-3.5 h-3.5" />
+                          <span>Download</span>
+                        </a>
+                      </div>
                     </div>
                   </div>
                 );
@@ -4008,13 +4057,30 @@ export default function ProjectWorkspace({
                             </div>
                           </div>
                           <div className="flex items-center space-x-1.5 shrink-0">
-                            <button
-                              type="button"
-                              onClick={() => alert(`Downloading "${file.name}" to local device.`)}
+                            {file.url && (
+                              <a
+                                href={file.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-xs text-indigo-600 bg-indigo-50 hover:bg-indigo-100 font-bold px-2.5 py-1 rounded-lg transition"
+                                title="Preview File"
+                              >
+                                Preview
+                              </a>
+                            )}
+                            <a
+                              href={file.url || '#'}
+                              download={file.name}
+                              onClick={(e) => {
+                                if (!file.url) {
+                                  e.preventDefault();
+                                  alert(`File not found on server: ${file.name}`);
+                                }
+                              }}
                               className="text-xs text-indigo-600 bg-indigo-50 hover:bg-indigo-100 font-bold px-2.5 py-1 rounded-lg transition"
                             >
                               Download
-                            </button>
+                            </a>
                             <button
                               type="button"
                               onClick={() => {

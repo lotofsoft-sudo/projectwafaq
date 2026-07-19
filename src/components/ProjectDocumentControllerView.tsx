@@ -37,7 +37,8 @@ import {
   Filter,
   UserCheck,
   ChevronRight,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Eye
 } from 'lucide-react';
 import { Project, Milestone, Invoice, Payment, User, Comment, DocumentController, getVatAppliedAmount } from '../types';
 import { jsPDF } from 'jspdf';
@@ -98,7 +99,7 @@ export default function ProjectDocumentControllerView({
   const [formStatus, setFormStatus] = useState<DocumentController['status']>('under_review');
   const [formControllerId, setFormControllerId] = useState('');
   const [formDescription, setFormDescription] = useState('');
-  const [draftAttachments, setDraftAttachments] = useState<{ name: string; size: string; uploadedAt?: string }[]>([]);
+  const [draftAttachments, setDraftAttachments] = useState<{ name: string; size: string; uploadedAt?: string; url?: string }[]>([]);
   const [isDragging, setIsDragging] = useState(false);
 
   // Direct Invoice/Payment dialog states
@@ -291,7 +292,7 @@ export default function ProjectDocumentControllerView({
   };
 
   const handleFiles = (fileList: FileList) => {
-    const newFiles: { name: string; size: string; uploadedAt?: string }[] = [];
+    const newFiles: { name: string; size: string; uploadedAt?: string; url?: string }[] = [];
     const totalSelected = fileList.length;
     const currentCount = draftAttachments.length;
 
@@ -311,7 +312,8 @@ export default function ProjectDocumentControllerView({
       newFiles.push({
         name: file.name,
         size: sizeStr,
-        uploadedAt: new Date().toISOString().slice(0, 10)
+        uploadedAt: new Date().toISOString().slice(0, 10),
+        url: URL.createObjectURL(file)
       });
     }
 
@@ -1315,23 +1317,42 @@ System Signature:    Verified by Wafaq Project Controls Auditor
                       {selectedDoc.attachments && selectedDoc.attachments.length > 0 ? (
                         selectedDoc.attachments.map((file, idx) => (
                           <div key={idx} className="bg-white p-2.5 rounded-lg border border-slate-200 text-[11px] flex items-center justify-between hover:border-indigo-200 transition">
-                            <div className="flex items-center space-x-2 overflow-hidden">
+                            <div className="flex items-center space-x-2 overflow-hidden flex-1">
                               <FileText className="w-4 h-4 text-indigo-500 shrink-0" />
                               <div className="overflow-hidden">
                                 <h5 className="font-bold text-slate-700 truncate" title={file.name}>{file.name}</h5>
                                 <span className="text-[9px] text-slate-400 font-mono block mt-0.5">{file.size} • Uploaded {file.uploadedAt || 'N/A'}</span>
                               </div>
                             </div>
-                            <a
-                              href="#"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                onAddNotification(`Downloading controlled transmittal file ${file.name}...`, 'info');
-                              }}
-                              className="p-1 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-slate-50 transition shrink-0"
-                            >
-                              <FileDown className="w-3.5 h-3.5" />
-                            </a>
+                            <div className="flex items-center space-x-1 shrink-0 ml-2">
+                              {file.url && (
+                                <a
+                                  href={file.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="p-1 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-slate-50 transition shrink-0"
+                                  title="View File"
+                                >
+                                  <Eye className="w-3.5 h-3.5" />
+                                </a>
+                              )}
+                              <a
+                                href={file.url || '#'}
+                                download={file.name}
+                                onClick={(e) => {
+                                  if (!file.url) {
+                                    e.preventDefault();
+                                    onAddNotification(`File not found on server: ${file.name}`, 'alert');
+                                  } else {
+                                    onAddNotification(`Downloading controlled transmittal file ${file.name}...`, 'info');
+                                  }
+                                }}
+                                className="p-1 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-slate-50 transition shrink-0"
+                                title="Download File"
+                              >
+                                <FileDown className="w-3.5 h-3.5" />
+                              </a>
+                            </div>
                           </div>
                         ))
                       ) : (

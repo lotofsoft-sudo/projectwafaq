@@ -82,7 +82,7 @@ export interface Project {
   currentWorkflowStep: number;
   progress: number;
   workflowStepsStatuses?: Record<number, 'pending' | 'in_progress' | 'completed'>;
-  workflowStepsAttachments?: Record<number, { name: string; size: string; uploadedAt: string; uploadedBy: string }[]>;
+  workflowStepsAttachments?: Record<number, { name: string; size: string; uploadedAt: string; uploadedBy: string; url?: string }[]>;
 }
 
 export interface BOQItem {
@@ -166,7 +166,7 @@ export interface Milestone {
   status: 'pending' | 'in_progress' | 'completed';
   dueDate: string;
   details?: string;
-  attachments?: { name: string; size: string; uploadedAt?: string }[];
+  attachments?: { name: string; size: string; uploadedAt?: string; url?: string }[];
 }
 
 export interface Comment {
@@ -221,7 +221,7 @@ export interface Issue {
   dateCreated: string;
   comments: Comment[];
   resolution?: string;
-  attachments?: { name: string; size: string; uploadedAt?: string }[];
+  attachments?: { name: string; size: string; uploadedAt?: string; url?: string }[];
   updates?: { id: string; text: string; user: string; role: string; date: string }[];
 }
 
@@ -237,7 +237,7 @@ export interface Variation {
   fileName?: string;
   refNumber?: string;
   comments?: Comment[];
-  attachments?: { name: string; size: string; uploadedAt?: string }[];
+  attachments?: { name: string; size: string; uploadedAt?: string; url?: string }[];
   updates?: { id: string; text: string; user: string; role: string; date: string }[];
 }
 
@@ -254,7 +254,7 @@ export interface Expense {
   description: string;
   fileName?: string;
   comments?: Comment[];
-  attachments?: { name: string; size: string; uploadedAt?: string }[];
+  attachments?: { name: string; size: string; uploadedAt?: string; url?: string }[];
   updates?: { id: string; text: string; user: string; role: string; date: string }[];
 }
 
@@ -278,7 +278,7 @@ export interface Invoice {
   paymentMethod?: 'Cash' | 'Bank Transfer';
   attachedInvoiceFile?: string;
   comments?: Comment[];
-  attachments?: { name: string; size: string; uploadedAt?: string }[];
+  attachments?: { name: string; size: string; uploadedAt?: string; url?: string }[];
   updates?: { id: string; text: string; user: string; role: string; date: string }[];
 }
 
@@ -294,7 +294,7 @@ export interface Payment {
   paymentMethod: string;
   status?: 'cleared' | 'pending' | 'disputed' | 'cancelled';
   comments?: Comment[];
-  attachments?: { name: string; size: string; uploadedAt?: string }[];
+  attachments?: { name: string; size: string; uploadedAt?: string; url?: string }[];
   updates?: { id: string; text: string; user: string; role: string; date: string }[];
   milestoneId?: string;
   milestoneName?: string;
@@ -313,6 +313,7 @@ export interface Document {
   referenceNumber?: string;
   expiryDate?: string;
   description?: string;
+  url?: string;
 }
 
 export interface AuditLog {
@@ -378,7 +379,7 @@ export interface DocumentController {
   actionDate?: string;
   description?: string;
   comments?: Comment[];
-  attachments?: { name: string; size: string; uploadedAt?: string }[];
+  attachments?: { name: string; size: string; uploadedAt?: string; url?: string }[];
   updates?: { id: string; text: string; user: string; role: string; date: string }[];
 }
 

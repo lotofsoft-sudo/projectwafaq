@@ -18,7 +18,9 @@ import {
   ExternalLink, 
   Clock,
   FileText,
-  Paperclip
+  Paperclip,
+  Download,
+  Eye
 } from 'lucide-react';
 import { Project, User } from '../types';
 import { WORKFLOW_STEP_NAMES } from '../data/mockData';
@@ -104,13 +106,16 @@ export default function WorkflowTracker({
     const file = e.target.files[0];
     
     setIsUploading(true);
+    // Generate object url for local preview
+    const fileUrl = URL.createObjectURL(file);
+    
     // Simulate brief elegant upload loader
     setTimeout(() => {
       const fileSizeStr = file.size > 1024 * 1024 
         ? `${(file.size / (1024 * 1024)).toFixed(1)} MB` 
         : `${Math.round(file.size / 1024)} KB`;
       
-      onAddStepAttachment(project.id, selectedStepForModal, file.name, fileSizeStr);
+      onAddStepAttachment(project.id, selectedStepForModal, file.name, fileSizeStr, fileUrl);
       setIsUploading(false);
     }, 800);
   };
@@ -446,7 +451,7 @@ export default function WorkflowTracker({
                   <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
                     {project.workflowStepsAttachments[selectedStepForModal].map((file, fileIdx) => (
                       <div key={fileIdx} className="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 bg-slate-50/30 text-xs">
-                        <div className="flex items-center space-x-2.5 overflow-hidden">
+                        <div className="flex items-center space-x-2.5 overflow-hidden flex-1">
                           <FileText className="w-4 h-4 text-slate-400 shrink-0" />
                           <div className="truncate min-w-0">
                             <p className="font-semibold text-slate-700 truncate">{file.name}</p>
@@ -454,6 +459,16 @@ export default function WorkflowTracker({
                               {file.size} • by {file.uploadedBy} • {file.uploadedAt}
                             </span>
                           </div>
+                        </div>
+                        <div className="flex items-center space-x-1 shrink-0 ml-2">
+                          {file.url && (
+                            <a href={file.url} target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-slate-100 transition-colors" title="View File">
+                              <Eye className="w-3.5 h-3.5" />
+                            </a>
+                          )}
+                          <a href={file.url || '#'} download={file.name} className="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-slate-100 transition-colors" title="Download File">
+                            <Download className="w-3.5 h-3.5" />
+                          </a>
                         </div>
                       </div>
                     ))}

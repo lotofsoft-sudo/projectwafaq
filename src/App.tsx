@@ -621,7 +621,7 @@ export default function App() {
   };
 
   // Add file attachment to a specific operational step
-  const handleAddStepAttachment = (projectId: string, stepNum: number, fileName: string, fileSize: string) => {
+  const handleAddStepAttachment = (projectId: string, stepNum: number, fileName: string, fileSize: string, fileUrl?: string) => {
     const stepName = WORKFLOW_STEP_NAMES[stepNum - 1];
     const timestamp = new Date().toISOString().slice(0, 10) + ' ' + new Date().toTimeString().slice(0, 5);
 
@@ -634,7 +634,8 @@ export default function App() {
           name: fileName,
           size: fileSize,
           uploadedAt: timestamp,
-          uploadedBy: currentUser.name
+          uploadedBy: currentUser.name,
+          url: fileUrl
         });
 
         attachments[stepNum] = stepAttachments;
@@ -672,7 +673,8 @@ export default function App() {
       uploadedAt: timestamp,
       size: fileSize,
       tags: ['Workflow Attachment', `Step ${stepNum}`, stepName],
-      description: `Attached to Operational Step #${stepNum}: ${stepName}`
+      description: `Attached to Operational Step #${stepNum}: ${stepName}`,
+      url: fileUrl
     };
 
     setDocuments(prev => [newDoc, ...prev]);
