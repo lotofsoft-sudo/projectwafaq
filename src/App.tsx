@@ -405,6 +405,7 @@ export default function App() {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<'overview' | 'boq' | 'quotations' | 'po' | 'budget' | 'milestones' | 'tasks' | 'issues' | 'variations' | 'expenses' | 'invoices' | 'payments' | 'documents' | 'quantities' | 'clients'>('overview');
+  const [projectWorkspaceSearchQuery, setProjectWorkspaceSearchQuery] = useState('');
 
   const currentPermissions = React.useMemo(() => {
     return roles.find(r => r.name === currentUser.role)?.permissions;
@@ -941,44 +942,100 @@ export default function App() {
           )}
 
           {currentView === 'projects' && activeProject && currentPermissions?.viewProjectsWorkspace !== false && (
-            <div id="project-workspace-split-container" className="h-full flex flex-col overflow-y-auto">
-              {/* Step Tracking Pipeline Header inside Projects view */}
-              <div className="px-4 md:px-6 pt-4 bg-white shrink-0 space-y-3 pb-2 border-b border-gray-100/60">
-                
-                {/* Mobile Active Project Dropdown Switcher */}
-                <div className="block lg:hidden w-full px-1">
-                  <label className="block text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest mb-1.5">Select Project Workspace</label>
-                  <div className="relative active-scale">
-                    <select
-                      value={selectedProjectId || ''}
-                      onChange={(e) => {
-                        setSelectedProjectId(e.target.value);
-                      }}
-                      className="w-full bg-slate-100/80 text-slate-800 text-sm font-semibold rounded-xl p-2.5 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-slate-200 cursor-pointer"
-                    >
-                      {projects.map((p) => (
-                        <option key={p.id} value={p.id}>
-                          {p.code} - {p.name} ({p.progress}%)
-                        </option>
-                      ))}
-                    </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                      <ChevronDown className="w-4 h-4 text-slate-500" />
-                    </div>
+            <div className="flex-1 flex overflow-hidden min-h-0 w-full bg-slate-50">
+              
+              {/* LEFT SIDEBAR: Project Selector */}
+              <div 
+                className="hidden lg:flex w-72 border-r border-slate-200 bg-white flex-col h-full shrink-0 relative z-10"
+              >
+                <div className="p-4 border-b border-slate-100 shrink-0">
+                  <h3 className="text-xs font-mono font-bold text-slate-800 uppercase tracking-widest mb-3">Projects Directory</h3>
+                  <div className="relative">
+                    <Search className="absolute left-2.5 top-2.5 w-3.5 h-3.5 text-slate-400" />
+                    <input
+                      type="text"
+                      placeholder="Search projects..."
+                      value={projectWorkspaceSearchQuery}
+                      onChange={(e) => setProjectWorkspaceSearchQuery(e.target.value)}
+                      className="w-full pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:ring-1 focus:ring-indigo-500 outline-none transition-shadow"
+                    />
                   </div>
                 </div>
 
-                <WorkflowTracker
-                  project={activeProject}
-                  currentUser={currentUser}
-                  onUpdateWorkflowStepStatus={handleUpdateWorkflowStepStatus}
-                  onNavigateToTab={(tabName) => setActiveWorkspaceTab(tabName)}
-                  onAddStepAttachment={handleAddStepAttachment}
-                />
+                <div className="flex-1 overflow-y-auto p-3 space-y-1">
+                  {projects.filter(p => 
+                    p.name.toLowerCase().includes(projectWorkspaceSearchQuery.toLowerCase()) || 
+                    p.code.toLowerCase().includes(projectWorkspaceSearchQuery.toLowerCase()) ||
+                    (p.clientName && p.clientName.toLowerCase().includes(projectWorkspaceSearchQuery.toLowerCase()))
+                  ).map((p) => {
+                    const isActive = selectedProjectId === p.id;
+                    return (
+                      <button
+                        key={p.id}
+                        onClick={() => setSelectedProjectId(p.id)}
+                        className={`w-full text-left p-3 rounded-xl transition-all cursor-pointer border ${
+                          isActive 
+                            ? 'bg-white border-indigo-200 shadow-md ring-1 ring-indigo-500/5' 
+                            : 'bg-transparent border-transparent hover:bg-slate-100 hover:border-slate-200'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-mono font-extrabold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded uppercase border border-indigo-100/50">
+                            {p.code}
+                          </span>
+                          <span className="text-[10px] font-mono font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
+                            {p.progress}%
+                          </span>
+                        </div>
+                        <h4 className="font-bold text-[11px] text-slate-800 mt-1.5 line-clamp-1">{p.name}</h4>
+                        <p className="text-[9px] text-slate-500 mt-0.5 truncate">
+                          Client: <span className="font-medium text-slate-600">{p.clientName}</span>
+                        </p>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
-              <div className="flex-1 flex flex-col overflow-visible">
-                <ProjectWorkspace
+              {/* Main Workspace Content */}
+              <div id="project-workspace-split-container" className="flex-1 flex flex-col h-full overflow-y-auto">
+                {/* Step Tracking Pipeline Header inside Projects view */}
+                <div className="px-4 md:px-6 pt-4 bg-white shrink-0 space-y-3 pb-2 border-b border-gray-100/60">
+                  
+                  {/* Mobile Active Project Dropdown Switcher */}
+                  <div className="block lg:hidden w-full px-1">
+                    <label className="block text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest mb-1.5">Select Project Workspace</label>
+                    <div className="relative active-scale">
+                      <select
+                        value={selectedProjectId || ''}
+                        onChange={(e) => {
+                          setSelectedProjectId(e.target.value);
+                        }}
+                        className="w-full bg-slate-100/80 text-slate-800 text-sm font-semibold rounded-xl p-2.5 pr-8 appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-slate-200 cursor-pointer"
+                      >
+                        {projects.map((p) => (
+                          <option key={p.id} value={p.id}>
+                            {p.code} - {p.name} ({p.progress}%)
+                          </option>
+                        ))}
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                        <ChevronDown className="w-4 h-4 text-slate-500" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <WorkflowTracker
+                    project={activeProject}
+                    currentUser={currentUser}
+                    onUpdateWorkflowStepStatus={handleUpdateWorkflowStepStatus}
+                    onNavigateToTab={(tabName) => setActiveWorkspaceTab(tabName)}
+                    onAddStepAttachment={handleAddStepAttachment}
+                  />
+                </div>
+
+                <div className="flex-1 flex flex-col overflow-visible">
+                  <ProjectWorkspace
                   roles={roles}
                   project={activeProject}
                   currentUser={currentUser}
@@ -1020,6 +1077,7 @@ export default function App() {
                 />
               </div>
             </div>
+          </div>
           )}
 
           {currentView === 'project' && currentPermissions?.viewProjectDetails !== false && (
