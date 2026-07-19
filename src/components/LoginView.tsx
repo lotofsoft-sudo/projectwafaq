@@ -337,13 +337,25 @@ export default function LoginView({
       </main>
 
       {/* Corporate footer */}
-      <footer className="w-full text-center py-6 px-6 relative z-10 text-[11px] text-slate-500 border-t border-slate-900 bg-slate-950/90 font-mono">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+      <footer className="w-full text-center py-6 px-6 relative z-10 text-[11px] text-slate-500 border-t border-slate-900 bg-slate-950/90 font-mono flex flex-col space-y-3">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 w-full">
           <span>{footerText}</span>
           <div className="flex space-x-4">
             <a href="#" onClick={(e) => e.preventDefault()} className="hover:text-slate-300 transition-colors">Information Security Policy</a>
             <span>•</span>
             <a href="#" onClick={(e) => e.preventDefault()} className="hover:text-slate-300 transition-colors">ERP Terms of Service</a>
+          </div>
+        </div>
+        
+        {/* Developer Info */}
+        <div className="max-w-7xl mx-auto pt-3 border-t border-slate-800/50 w-full">
+          <div className="text-[10px] text-slate-400 font-mono space-y-1">
+            <p className="font-bold text-slate-300">Developed and Designed by: Mohammad iftekhairul alam</p>
+            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+              <span>FB: fb.com/fyslbd</span>
+              <span>Whatsapp: @fyslbd</span>
+              <span>Mobile: +966557916317</span>
+            </div>
           </div>
         </div>
       </footer>

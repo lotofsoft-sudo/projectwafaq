@@ -922,7 +922,7 @@ export default function App() {
         />
 
         {/* Dynamic Route views */}
-        <main id="view-viewport" className="flex-1 overflow-hidden flex flex-col relative">
+        <main id="view-viewport" className="flex-1 overflow-hidden flex flex-col relative pb-16 lg:pb-0">
           
           {currentView === 'dashboard' && currentPermissions?.viewDashboard !== false && (
             <DashboardView
@@ -1339,6 +1339,17 @@ export default function App() {
             />
           )}
 
+          {/* Global Developer Footer */}
+          <div className="bg-white border-t border-slate-200 py-1.5 px-4 shrink-0 z-20 text-center w-full mt-auto shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] relative">
+            <div className="text-[9px] text-slate-500 font-mono flex flex-col sm:flex-row items-center justify-center sm:space-x-4 space-y-0.5 sm:space-y-0">
+              <span className="font-bold text-slate-700">Developed and Designed by: Mohammad iftekhairul alam</span>
+              <div className="flex items-center space-x-3">
+                <span>FB: fb.com/fyslbd</span>
+                <span>Whatsapp: @fyslbd</span>
+                <span>Mobile: +966557916317</span>
+              </div>
+            </div>
+          </div>
         </main>
 
         {/* Beautiful Mobile Sticky Bottom Navigation Bar */}
