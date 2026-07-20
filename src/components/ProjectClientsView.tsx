@@ -238,7 +238,7 @@ export default function ProjectClientsView({
         {/* 1. LEFT PANEL: Project Selection List */}
         <div 
           id="clients-project-sidebar" 
-          className={`w-72 border-r border-slate-200 bg-white flex flex-col h-full shrink-0 transition-transform lg:translate-x-0 ${
+          className={`w-72 border-r border-slate-200 bg-white flex flex-col h-full shrink-0 transition-transform lg:translate-x-0 lg:relative lg:pointer-events-auto lg:z-10 ${
             mobileDetailOpen ? '-translate-x-full absolute pointer-events-none' : 'relative z-10'
           }`}
         >
@@ -298,8 +298,8 @@ export default function ProjectClientsView({
       {/* 2. RIGHT PANEL: Clients management viewport */}
       <div 
         id="clients-data-viewport" 
-        className={`flex-1 flex flex-col h-full overflow-hidden transition-transform ${
-          mobileDetailOpen ? 'translate-x-0 relative z-20 bg-white' : 'translate-x-full lg:translate-x-0'
+        className={`flex-1 flex flex-col h-full overflow-hidden transition-transform lg:translate-x-0 lg:relative lg:pointer-events-auto lg:z-10 ${
+          mobileDetailOpen ? 'translate-x-0 relative z-20 bg-white' : 'translate-x-full absolute pointer-events-none'
         }`}
       >
         {activeProject ? (
